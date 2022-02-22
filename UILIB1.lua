@@ -42,7 +42,7 @@ local function Ripple(Button, x, y)
 	Ripple.BackgroundTransparency = 1
 	Ripple.AnchorPoint = Vector2.new(0.5, 0.5)
 	Ripple.Position = UDim2.new(0,x - Button.AbsolutePosition.X, 0, y - Button.AbsolutePosition.Y - 36)
-	Ripple.Image = "rbxassetid://3570695787"
+	Ripple.Image = "rbxassetid://7391553361"
 	Ripple.ScaleType = Enum.ScaleType.Slice
 	Ripple.SliceCenter = Rect.new(100, 100, 100, 100)
 	local RippleFx = MakeTween(Ripple, TweenInfo.new(0.5), {Size = UDim2.new(0, 300, 0, 300), ImageTransparency = 0.95})
@@ -112,7 +112,7 @@ if _G.Settings['Intro'] == true then
 	TitleFrame.Selectable = false
 	TitleFrame.Size = UDim2.new(8.1, 0, 35, 0)
 	TitleFrame.ZIndex = 4
-	TitleFrame.Image = "rbxassetid://3570695787"
+	TitleFrame.Image = "rbxassetid://7391553361"
 	TitleFrame.ImageColor3 = Color3.fromRGB(0, 0, 25)
 	TitleFrame.ScaleType = Enum.ScaleType.Slice
 	TitleFrame.SliceCenter = Rect.new(100, 100, 100, 100)
