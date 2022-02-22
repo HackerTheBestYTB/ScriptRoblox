@@ -42,7 +42,7 @@ local function Ripple(Button, x, y)
 	Ripple.BackgroundTransparency = 1
 	Ripple.AnchorPoint = Vector2.new(0.5, 0.5)
 	Ripple.Position = UDim2.new(0,x - Button.AbsolutePosition.X, 0, y - Button.AbsolutePosition.Y - 36)
-	Ripple.Image = "rbxassetid://7391553361"
+	Ripple.Image = "rbxassetid://2884273676"
 	Ripple.ScaleType = Enum.ScaleType.Slice
 	Ripple.SliceCenter = Rect.new(100, 100, 100, 100)
 	local RippleFx = MakeTween(Ripple, TweenInfo.new(0.5), {Size = UDim2.new(0, 300, 0, 300), ImageTransparency = 0.95})
@@ -112,7 +112,7 @@ if _G.Settings['Intro'] == true then
 	TitleFrame.Selectable = false
 	TitleFrame.Size = UDim2.new(8.1, 0, 35, 0)
 	TitleFrame.ZIndex = 4
-	TitleFrame.Image = "rbxassetid://7391553361"
+	TitleFrame.Image = "rbxassetid://2884273676"
 	TitleFrame.ImageColor3 = Color3.fromRGB(0, 0, 25)
 	TitleFrame.ScaleType = Enum.ScaleType.Slice
 	TitleFrame.SliceCenter = Rect.new(100, 100, 100, 100)
@@ -194,7 +194,7 @@ MainFrame.BackgroundTransparency = 1.000
 MainFrame.Position = UDim2.new(0.5, 0, 1.35, 0)
 MainFrame.ClipsDescendants = true
 MainFrame.Size = UDim2.new(0.45, 0, 0.55, 0)
-MainFrame.Image = "rbxassetid://3570695787"
+MainFrame.Image = "rbxassetid://2884273676"
 MainFrame.ImageColor3 = Color3.fromRGB(0, 0, 0)
 MainFrame.ImageTransparency = 0.100
 MainFrame.ScaleType = Enum.ScaleType.Slice
@@ -207,7 +207,7 @@ InfoFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 InfoFrame.BackgroundTransparency = 1.000
 InfoFrame.Size = UDim2.new(0.300000012, 0, 1, 0)
 InfoFrame.Size = UDim2.new(0, InfoFrame.AbsoluteSize.X, InfoFrame.Size.Y.Scale, 0)
-InfoFrame.Image = "rbxassetid://3570695787"
+InfoFrame.Image = "rbxassetid://2884273676"
 InfoFrame.ImageColor3 = Color3.fromRGB(25, 25, 25)
 InfoFrame.ImageTransparency = 0.100
 InfoFrame.ScaleType = Enum.ScaleType.Slice
@@ -221,7 +221,7 @@ Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Icon.BackgroundTransparency = 1.000
 Icon.Position = UDim2.new(0.5, 0, 0.235, 0)
 Icon.Size = UDim2.new(0.7, 0, 0.25, 0)
-Icon.Image = "http://www.roblox.com/asset/?id=5230440166"
+Icon.Image = "http://www.roblox.com/asset/?id=2884273676"
 
 Title.Name = "Title"
 Title.Parent = InfoFrame
