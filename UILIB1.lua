@@ -287,7 +287,7 @@ Text.BackgroundTransparency = 1.000
 Text.Position = UDim2.new(0.325, 0, 0.5, -1)
 Text.Size = UDim2.new(0.65, 0, 1, 0)
 Text.Font = Enum.Font.GothamSemibold
-Text.Text = " to toggle UI"
+Text.Text = " để mở gui"
 Text.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text.TextScaled = true
 Text.TextSize = 14.000
@@ -705,7 +705,7 @@ function Library:CreateTab(Name)
 		TextLabel.Position = UDim2.new(0, 0, 0.5, 0)
 		TextLabel.Size = UDim2.new(0.75, 0, 0.699999988, 0)
 		TextLabel.Font = Enum.Font.GothamBlack
-		TextLabel.Text = "TOGGLE"
+		TextLabel.Text = ToggleText
 		TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		TextLabel.TextScaled = true
 		TextLabel.TextSize = 14.000
