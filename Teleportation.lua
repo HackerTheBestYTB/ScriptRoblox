@@ -44,7 +44,7 @@ local dependencies = {
         raycast_params = RaycastParams.new(),
         path = pathfinding_service:CreatePath({WaypointSpacing = 3}),
         player_speed = 150, 
-        vehicle_speed = 100
+        vehicle_speed = 1000
     },
     modules = {
         ui = require(replicated_storage.Module.UI),
