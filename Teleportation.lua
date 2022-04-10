@@ -128,7 +128,7 @@ function movement:pathfind(tried)
                     return;
                 end;
 
-                wait(0.05);
+                wait(0.25);
             end;
         end;
 
@@ -145,7 +145,7 @@ function movement:move_to_position(part, cframe, speed, car, target_vehicle, tri
     
     if not car and workspace:Raycast(part.Position, dependencies.variables.up_vector, dependencies.variables.raycast_params) then -- if there is an object above us, use pathfind function to get to a position with no collision above
         movement:pathfind({});
-        wait(0.25);
+        wait(0.5);
     end;
     
     local y_level = 600;
@@ -268,7 +268,7 @@ local function teleport(cframe, tried) -- unoptimized
                     
                     enter_attempts = enter_attempts + 1;
 
-                    wait(0.25);
+                    wait(0.5);
                 until enter_attempts == 10 or nearest_vehicle.Seat.PlayerName.Value == player.Name;
 
                 if nearest_vehicle.Seat.PlayerName.Value ~= player.Name then -- if it failed to enter, try a new car
