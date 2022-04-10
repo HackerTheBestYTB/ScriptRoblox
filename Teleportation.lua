@@ -103,7 +103,7 @@ function utilities:get_nearest_vehicle(tried) -- unoptimized
 end;
 
 --// function to pathfind to a position with no collision above
-
+--[[
 function movement:pathfind(tried)
     local tried = tried or {};
     local nearest_vehicle = utilities:get_nearest_vehicle(tried);
@@ -137,7 +137,7 @@ function movement:pathfind(tried)
 
     movement:pathfind(tried);
 end;
-
+]]
 --// function to interpolate characters position to a position
 
 function movement:move_to_position(part, cframe, speed, car, target_vehicle, tried_vehicles)
