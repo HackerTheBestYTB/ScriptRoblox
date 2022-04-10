@@ -205,7 +205,7 @@ for index, vehicle_data in next, dependencies.modules.vehicle_data do
     end;
     
     if not vehicle_data.Price then -- free vehicles
-        dependencies.free_vehicles[vehicle_data.Make] = true;
+        dependencies.free_vehicles[vehicle_data.Make] = false;
     end;
 end;
 
