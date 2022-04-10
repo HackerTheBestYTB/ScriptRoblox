@@ -52,7 +52,7 @@ local dependencies = {
         player_utils = require(replicated_storage.Game.PlayerUtils),
         vehicle_data = require(replicated_storage.Game.Garage.VehicleData)
     },
-    helicopters = {Heli = true}, -- heli is included in free vehicles
+    helicopters = {Heli = false}, -- heli is included in free vehicles
     motorcycles = {Volt = true}, -- volt type is "custom" but works the same as a motorcycle
     free_vehicles = {},
     unsupported_vehicles = {},
@@ -195,7 +195,7 @@ end);
 
 for index, vehicle_data in next, dependencies.modules.vehicle_data do
     if vehicle_data.Type == "Heli" then -- helicopters
-        dependencies.helicopters[vehicle_data.Make] = false;
+        dependencies.helicopters[vehicle_data.Make] = true;
     elseif vehicle_data.Type == "Motorcycle" then --- motorcycles
         dependencies.motorcycles[vehicle_data.Make] = true;
     end;
