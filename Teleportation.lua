@@ -44,7 +44,7 @@ local dependencies = {
         raycast_params = RaycastParams.new(),
         path = pathfinding_service:CreatePath({WaypointSpacing = 3}),
         player_speed = 150, 
-        vehicle_speed = 500
+        vehicle_speed = 485
     },
     modules = {
         ui = require(replicated_storage.Module.UI),
@@ -268,7 +268,7 @@ local function teleport(cframe, tried) -- unoptimized
                     
                     enter_attempts = enter_attempts + 1;
 
-                    wait(0.5);
+                    wait(0.75);
                 until enter_attempts == 10 or nearest_vehicle.Seat.PlayerName.Value == player.Name;
 
                 if nearest_vehicle.Seat.PlayerName.Value ~= player.Name then -- if it failed to enter, try a new car
