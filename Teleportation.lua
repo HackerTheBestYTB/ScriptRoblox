@@ -128,7 +128,7 @@ function movement:pathfind(tried)
                     return;
                 end;
 
-                wait(0.05);
+                wait(0.1);
             end;
         end;
 
@@ -148,7 +148,7 @@ function movement:move_to_position(part, cframe, speed, car, target_vehicle, tri
         wait(0.5);
     end;
     
-    local y_level = 500;
+    local y_level = 600;
     local higher_position = Vector3.new(vector_position.X, y_level, vector_position.Z); -- 500 studs above target position
 
     repeat -- use velocity to move towards the target position
