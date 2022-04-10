@@ -128,7 +128,7 @@ function movement:pathfind(tried)
                     return;
                 end;
 
-                wait(0.2);
+                wait(0.5);
             end;
         end;
 
