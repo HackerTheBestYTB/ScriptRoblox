@@ -1,3 +1,7 @@
+local client = {}
+client.Notify = function(callback)
+	return require(game:GetService("ReplicatedStorage").Game.Notification).new(callback)
+end
 local ID = game:GetService("RbxAnalyticsService"):GetClientId();
 
 client.Notify({Text = "Đang xác thực id máy...     "})
