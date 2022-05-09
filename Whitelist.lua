@@ -13,6 +13,7 @@ if v == ID then
 else
 	client.Notify({Text = "Mã xác thực sai    "})
 	client.Notify({Text = "Đã copy id, gửi cho ad để thêm        "})
+	print("")
 	setclipboard(ID)
 	end
 end
