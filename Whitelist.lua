@@ -3,17 +3,21 @@ client.Notify = function(callback)
 	return require(game:GetService("ReplicatedStorage").Game.Notification).new(callback)
 end
 local ID = game:GetService("RbxAnalyticsService"):GetClientId();
-local whitelist = loadstring(game:HttpGet("https://raw.githubusercontent.com/HackerTheBestYTB/ScriptRoblox/test/list.lua"))()
 
 client.Notify({Text = "Đang xác thực id máy...     "})
 wait(2)
-for i, v in ipairs(whitelist) do 
-if v == ID then 
+
+if ID == "BEF49A83-21F6-4BB5-967E-3A106BB817AC" then 
 	client.Notify({Text = "Thành Công  "})
-else
+elseif ID == "2" then
+	client.Notify({Text = "Thành Công  "})
+elseif ID == "3" then
+	client.Notify({Text = "Thành Công  "})
+elseif ID == "4" then
+	client.Notify({Text = "Thành Công  "})
+else	
 	client.Notify({Text = "Mã xác thực sai    "})
 	client.Notify({Text = "Đã copy id, gửi cho ad để thêm        "})
-	print("")
 	setclipboard(ID)
 	end
 end
