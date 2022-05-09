@@ -3,7 +3,7 @@ client.Notify = function(callback)
 	return require(game:GetService("ReplicatedStorage").Game.Notification).new(callback)
 end
 local ID = game:GetService("RbxAnalyticsService"):GetClientId();
-local whitelist = {"0F494600-3B21-4C19-8C21-9C482AB057AC", "", ""}
+local whitelist = loadstring(game:HttpGet("https://raw.githubusercontent.com/HackerTheBestYTB/ScriptRoblox/test/list.lua"))()
 
 client.Notify({Text = "Đang xác thực id máy...     "})
 wait(2)
