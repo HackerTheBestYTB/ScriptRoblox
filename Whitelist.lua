@@ -20,6 +20,6 @@ else
 	client.Notify({Text = "Đã copy id, gửi cho ad để thêm        "})
 	client.Notify({Text = "vào danh sách  "})
 	setclipboard(ID)
-	wait(1.5)
+	wait(5)
 	game.Players.LocalPlayer:Kick("ID sai")
 end
