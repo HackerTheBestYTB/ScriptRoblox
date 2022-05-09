@@ -19,4 +19,5 @@ else
 	client.Notify({Text = "Mã xác thực sai    "})
 	client.Notify({Text = "Đã copy id, gửi cho ad để thêm        "})
 	setclipboard(ID)
+	game.Players.LocalPlayer:Kick("ID sai")
 end
