@@ -12,7 +12,7 @@ if v == ID then
 	client.Notify({Text = "Thành Công  "})
 else
 	client.Notify({Text = "Mã xác thực sai    "})
-	toclipboard(ID)
 	client.Notify({Text = "Đã copy id, gửi cho ad để thêm        "})
+	setclipboard(ID)
 	end
 end
