@@ -7,7 +7,7 @@ local ID = game:GetService("RbxAnalyticsService"):GetClientId();
 client.Notify({Text = "Đang xác thực id máy...     "})
 wait(2)
 
-if ID == "1" then -- BEF49A83-21F6-4BB5-967E-3A106BB817AC
+if ID == "BEF49A83-21F6-4BB5-967E-3A106BB817AC" then -- BEF49A83-21F6-4BB5-967E-3A106BB817AC
 	client.Notify({Text = "Thành Công  "})
 elseif ID == "5011075B-B885-4FE8-9386-F4CF22EB8FE3" then
 	client.Notify({Text = "Thành Công  "})
