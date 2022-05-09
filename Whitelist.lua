@@ -18,6 +18,7 @@ elseif ID == "4" then
 else	
 	client.Notify({Text = "Mã xác thực sai    "})
 	client.Notify({Text = "Đã copy id, gửi cho ad để thêm        "})
+	client.Notify({Text = "vào danh sách  "})
 	setclipboard(ID)
 	wait(1.5)
 	game.Players.LocalPlayer:Kick("ID sai")
