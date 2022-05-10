@@ -8,17 +8,18 @@ client.Notify({Text = "Đang xác thực id máy...     "})
 wait(2)
 
 if ID == "BEF49A83-21F6-4BB5-967E-3A106BB817AC" then -- BEF49A83-21F6-4BB5-967E-3A106BB817AC
-	client.Notify({Text = "Thành Công  "})
+	client.Notify({Text = "Thành Công..  "})
 elseif ID == "5011075B-B885-4FE8-9386-F4CF22EB8FE3" then
-	client.Notify({Text = "Thành Công  "})
+	client.Notify({Text = "Thành Công..  "})
 elseif ID == "3" then
-	client.Notify({Text = "Thành Công  "})
+	client.Notify({Text = "Thành Công...  "})
 elseif ID == "4" then
-	client.Notify({Text = "Thành Công  "})
+	client.Notify({Text = "Thành Công...  "})
 else	
-	client.Notify({Text = "Mã xác thực sai    "})
-	client.Notify({Text = "Đã copy id, gửi cho ad để thêm list        "})
+	client.Notify({Text = "Mã xác thực sai...    "})
+	client.Notify({Text = "Đã copy id, gửi cho ad để thêm list...        "})
 	setclipboard(ID)
 	wait(5)
-	game.Players.LocalPlayer:Kick("ID sai")
+	game.Players.LocalPlayer:Kick("ID sai.")
+	wait(99999)
 end
