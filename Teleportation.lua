@@ -295,7 +295,7 @@ local function teleport(cframe, tried) -- unoptimized
                     
                     enter_attempts = enter_attempts + 1;
 
-                    task.wait(0.25);
+                    task.wait(0.5);
                 until enter_attempts == 10 or nearest_vehicle.Seat.PlayerName.Value == player.Name;
 
                 if nearest_vehicle.Seat.PlayerName.Value ~= player.Name then -- if it failed to enter, try a new car
@@ -320,7 +320,7 @@ local function teleport(cframe, tried) -- unoptimized
             movement:move_to_position(vehicle_root_part, cframe, dependencies.variables.vehicle_speed, true);
 
             repeat -- attempt to exit car
-                task.wait(0.15);
+                task.wait(0.25);
                 network:FireServer(keys.ExitCar);
             until nearest_vehicle.Seat.PlayerName.Value ~= player.Name;
         end;
