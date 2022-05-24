@@ -320,7 +320,7 @@ local function teleport(cframe, tried) -- unoptimized
             movement:move_to_position(vehicle_root_part, cframe, dependencies.variables.vehicle_speed, true);
 
             repeat -- attempt to exit car
-                task.wait(0.25);
+                wait(0.25);
                 network:FireServer(keys.ExitCar);
             until nearest_vehicle.Seat.PlayerName.Value ~= player.Name;
         end;
