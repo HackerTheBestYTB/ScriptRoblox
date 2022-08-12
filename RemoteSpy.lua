@@ -13,7 +13,7 @@ if _G.SimpleSpyExecuted and type(_G.SimpleSpyShutdown) == "function" then
 end
 
 local Players = game:GetService("Players")
-local Highlight = loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/highlight.lua"))()
+local Highlight = loadstring(game:HttpGet("https://raw.githubusercontent.com/HackerTheBestYTB/ScriptRoblox/test/spyhighlight.lua"))()
 
 ---- GENERATED (kinda sorta mostly) BY GUI to LUA ----
 
