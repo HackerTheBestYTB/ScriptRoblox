@@ -113,7 +113,7 @@ devs:Button("Low",function()
 	sethiddenproperty(game.Lighting, "Technology", "Compatibility")
 end)
 
-devs:Button("Low (Max Distance)",function()
+devs:Button("Low(Distance)",function()
 	local a = game
 	local b = a.Workspace
 	local c = a.Lighting
@@ -156,7 +156,7 @@ devs:Button("Low (Max Distance)",function()
 	sethiddenproperty(game.Lighting, "Technology", "Compatibility")
 end)
 
-devs:Button("Ultra Low",function()
+devs:Button("UltraLow",function()
 	local a = game
 	local b = a.Workspace
 	local c = a.Lighting
@@ -202,7 +202,7 @@ devs:Button("Ultra Low",function()
 	sethiddenproperty(game.Lighting, "Technology", "Compatibility")
 end)
 
-devs:Button("Ultra Low (Max Distance)",function()
+devs:Button("UltraLow(+Distance)",function()
 	local a = game
 	local b = a.Workspace
 	local c = a.Lighting
