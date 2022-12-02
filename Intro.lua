@@ -14,7 +14,7 @@ ImageLabel.ImageTransparency = 1
 
 for i = 1, 50, 2 do
     blur.Size = i
-    wait(0.05)
+    wait(0.04)
     ImageLabel.ImageTransparency = ImageLabel.ImageTransparency - 0.1
     wait()
 end
