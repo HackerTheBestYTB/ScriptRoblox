@@ -102,7 +102,7 @@ local Plr = Players.LocalPlayer
 local Char = Plr.Character or Plr.CharacterAdded:Wait()
 local Hum = Char:WaitForChild("Humanoid")
 
-local stamina, staminaMax = 1000, 1000
+local stamina, staminaMax = 100, 100
 local sprintTime = 7
 local cooldown = false
 
