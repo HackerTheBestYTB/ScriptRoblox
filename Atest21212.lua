@@ -1,4 +1,4 @@
-{
+return {
 	--Free ID
 	"",
 	--Dev ID
