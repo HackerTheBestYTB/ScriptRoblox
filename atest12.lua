@@ -1,1 +1,1 @@
-print(a)
+print(_G.A)
