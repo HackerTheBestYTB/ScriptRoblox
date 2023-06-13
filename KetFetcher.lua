@@ -1,159 +1,373 @@
---// Check if Already in Env 
+--// Check if already in env
 
-if network_keys and network then 
-    return network_keys, network;
-end;
+if networkKeys and network then 
+    return networkKeys, network
+end
 
 --// Variables 
 
-local start_time = tick();
+local startTime = tick()
 
-local replicated_storage = game:GetService("ReplicatedStorage");
-local collection_service = game:GetService("CollectionService");
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 
-local network = getupvalue(require(replicated_storage.Module.AlexChassis).SetEvent, 1);
-local keys_list = getupvalue(getupvalue(network.FireServer, 1), 3);
+local network = getupvalue(require(ReplicatedStorage.Module.AlexChassis).SetEvent, 1)
+local keysList = getupvalue(getupvalue(network.FireServer, 1), 3)
 
-local game_folder = replicated_storage.Game;
+local gameFolder = ReplicatedStorage.Game
+local robloxEnvironment = getrenv()
 
-local team_choose_ui = require(game_folder.TeamChooseUI); -- module used in multiple keys
-local default_actions = require(game_folder.DefaultActions); -- module used in multiple keys
+local teamChooseUI = require(gameFolder.TeamChooseUI) -- module used in multiple keys
+local defaultActions = require(gameFolder.DefaultActions) -- module used in multiple keys
+local itemSystem = require(gameFolder.ItemSystem.ItemSystem) -- module used in multiple keys
 
-local roblox_environment = getrenv();
-local network_keys = {};
+local networkKeys = {}
+local keyFunctions = {}
+local blacklistedConstants = {}
+local keyCache = {}
+local backupKeys = { -- could do getinfo numparams but this is faster
+    Arrest = true
+}
 
---// Functions 
+local exceptionKeys = { -- keys to use alternative method (deemed to be more efficient for these cases)
+    PlaySound = function(checkFunction)
+        return getconstants(checkFunction)[1] == "Source"
+    end,
+    CameraUpdate = function(checkFunction)
+        return getconstants(checkFunction)[1] == "MakeSpring"
+    end
+}
 
-local function fetch_key(caller_function)
-    local constants = getconstants(caller_function);
+for index, value in next, getrenv() do -- soooo bad
+    if index ~= "_G" and index ~= "shared" and typeof(value) == "table" then
+        for name in next, value do
+            table.insert(blacklistedConstants, name)
+        end
+    end
+end
+
+--// Functions
+
+local function fetchKey(callerFunction, keyIndex)
+    keyIndex = keyIndex or 1
+    
+    if keyCache[callerFunction] then
+        local correctKey = keyCache[callerFunction][keyIndex]
+
+        return correctKey and correctKey[1] or "Failed to fetch key"
+    end
+    
+    local constants = getconstants(callerFunction)
+    
+    local prefixIndexes = {}
+    local foundKeys = {}
+    local constantCharacters = {}
     
     for index, constant in next, constants do
-        if keys_list[constant] then -- if the constants already contain the raw key
-            return constant;
-        elseif type(constant) ~= "string" or constant == "" or roblox_environment[constant] or string[constant] or table[constant] or #constant > 7 or constant:lower() ~= constant then
-            constants[index] = nil; -- remove constants that are 100% not the ones we need to make it a bit faster
-        end;
-    end;
-    
-    for key, remote in next, keys_list do 
-        local prefix_passed = false;
-        local key_length = #key;
-        
-        for index, constant in next, constants do 
-            local constant_length = #constant;
+        if keysList[constant] then -- if the constants already contain the raw key
+            table.insert(foundKeys, { constant, 0 })
             
-            if not prefix_passed and key:sub(1, constant_length) == constant then -- check if the key starts with one of the constants
-                prefix_passed = constant;
-            elseif prefix_passed and constant ~= prefix_passed and key:sub(key_length - (constant_length - 1), key_length) == constant then -- check if the key ends with one of the constants
-                return key;
-            end;
-        end;
-    end;
-end;
+            constants[index] = nil
+        elseif typeof(constant) ~= "string" or constant == "" or constant:match("%u") or constant:match("%W") or table.find(blacklistedConstants, constant) then
+            constants[index] = nil -- remove constants that are 100% not the ones we need to make it a bit faster
+        else
+            for character in constant:gmatch("(%w)") do
+                table.insert(constantCharacters, character)
+            end
+        end
+    end
+    
+    for key, remote in next, keysList do
+        local prefixPassed, prefixIndex = false
+        local keyLength = #key
+        
+        for index, constant in next, constants do
+            local constantLength = #constant
 
---// Key Fetching 
+            if not prefixPassed and key:sub(1, constantLength) == constant then -- check if the key starts with one of the constants
+                prefixPassed, prefixIndex = constant, index
+            elseif prefixPassed and key:sub(keyLength - (constantLength - 1), keyLength) == constant then -- check if the key ends with one of the constants
+                local currentConstantCharacters = table.clone(constantCharacters)
+                local charactersValid = true
+
+                for character in key:gmatch("(%w)") do -- make sure every character in the key shows up
+                    if not table.find(currentConstantCharacters, character) then
+                        charactersValid = false
+                        
+                        break
+                    end
+                    
+                    table.remove(currentConstantCharacters, table.find(currentConstantCharacters, character))
+                end
+                
+                if charactersValid then
+                    table.insert(prefixIndexes, prefixIndex)
+                    table.insert(foundKeys, { key, index })
+                end
+
+                break
+            end
+        end
+    end
+    
+    -- cleanse invalid keys
+    for index, keyInfo in next, foundKeys do
+        if table.find(prefixIndexes, keyInfo[2]) then -- invalid keys will have a suffix of a prefix used in another key
+            table.remove(foundKeys, index)
+        end
+    end
+    
+    keyCache[callerFunction] = foundKeys
+
+    local correctKey = foundKeys[keyIndex]
+
+    return correctKey and correctKey[1] or "Failed to fetch key"
+end
+
+local function errorHandle(callback)
+    local success, returnValue = pcall(callback)
+
+    if not success then
+        return warn("Jailbreak Key Fetcher Error: " .. returnValue)
+    end
+
+    return returnValue
+end
+
+--// Fetch functions for keys
 
 do -- redeemcode
-    local redeem_code_function = getproto(require(game_folder.Codes).Init, 4);
-
-    network_keys.RedeemCode = fetch_key(redeem_code_function);
-end;
+    keyFunctions.RedeemCode = function()
+        return getproto(require(gameFolder.Codes).Init, 8)
+    end
+end
 
 do -- kick
-    local door_removed_function = getconnections(collection_service:GetInstanceRemovedSignal("Door"))[1].Function;
-    local kick_function = getupvalue(getupvalue(getupvalue(getupvalue(door_removed_function, 2), 2).Run, 1), 1)[4].c;
-    
-    network_keys.Kick = fetch_key(kick_function);
-end;
+    keyFunctions.Kick = function()
+        local doorRemovedFunction = getconnections(CollectionService:GetInstanceRemovedSignal("Door"))[1].Function
+
+        return getupvalue(getupvalue(getupvalue(getupvalue(doorRemovedFunction, 2), 2).Run, 1), 1)[4].c
+    end
+end
 
 do -- damage
-    local military_added_function = require(game_folder.MilitaryTurret.MilitaryTurretBinder)._classAddedSignal._handlerListHead._fn;
-    local damage_function = getproto(military_added_function, 1);
-    
-    network_keys.Damage = fetch_key(damage_function);
-end;
+    keyFunctions.Damage = function()
+        local militaryAddedFunction = require(gameFolder.MilitaryTurret.MilitaryTurretBinder)._classAddedSignal._handlerListHead._fn
 
-do -- switchteam
-    local switch_team_function = getproto(team_choose_ui.Show, 4);
+        return getproto(militaryAddedFunction, 1)
+    end
+end
 
-    network_keys.SwitchTeam = fetch_key(switch_team_function);
-end;
+do -- switchteam (needs to be called before jointeam)
+    keyFunctions.JoinTeam = function()
+        return getproto(teamChooseUI.Show, 4)
+    end
+end
+
+do -- jointeam
+    keyFunctions.SwitchTeam = function()
+        return getproto(getproto(getproto(require(gameFolder.SidebarUI).Init, 2), 1), 1)
+    end
+end
 
 do -- exitcar
-    local exit_car_function = getupvalue(team_choose_ui.Init, 3);
-    
-    network_keys.ExitCar = fetch_key(exit_car_function);
-end;
+    keyFunctions.ExitCar = function()
+        return getupvalue(teamChooseUI.Init, 3)
+    end
+end
 
 do -- taze
-    local taze_function = require(game_folder.Item.Taser).Tase;
-
-    network_keys.Taze = fetch_key(taze_function);
-end;
+    keyFunctions.Taze = function()
+        return require(gameFolder.Item.Taser).Tase
+    end
+end
+    
+do -- droprope
+    keyFunctions.DropRope = function()
+        return getproto(require(gameFolder.Vehicle.Heli), 5)
+    end
+end
 
 do -- punch
-    local punch_function = getupvalue(default_actions.punchButton.onPressed, 1).attemptPunch;
+    keyFunctions.Punch = function()
+        return getupvalue(defaultActions.punchButton.onPressed, 1).attemptPunch
+    end
+end
+
+do -- arrest / pickpocket / breakout
+    local characterInteractFunction = errorHandle(function()
+        return getupvalue(getupvalue(require(ReplicatedStorage.App.CharacterBinder)._classAddedSignal._handlerListHead._fn, 1), 2)
+    end)
+
+    keyFunctions.Arrest = function(backup)
+        if backup then
+            return getupvalue(getupvalue(characterInteractFunction, 1), 7)
+        else
+            return getupvalue(characterInteractFunction, 1)
+        end
+    end
+
+    keyFunctions.Pickpocket = function()
+        return getupvalue(characterInteractFunction, 3)
+    end
     
-    network_keys.Punch = fetch_key(punch_function);
-end;
-
-do -- falldamage
-    local jump_function = default_actions.onJumpPressed._handlerListHead._next._fn;
-    local fall_function = getupvalue(getupvalue(getupvalue(jump_function, 1), 4), 3);
-    
-    network_keys.FallDamage = fetch_key(fall_function);
-end;
-
-do -- pickpocket / arrest
-    local character_added_function = getconnections(collection_service:GetInstanceAddedSignal("Character"))[1].Function;
-    local interact_function = getupvalue(character_added_function, 2);
-
-    local pickpocket_function = getupvalue(getupvalue(interact_function, 2), 2);
-    local arrest_function = getupvalue(getupvalue(interact_function, 1), 7);
-
-    network_keys.Pickpocket = fetch_key(pickpocket_function);
-    network_keys.Arrest = fetch_key(arrest_function);
-end;
+    keyFunctions.Breakout = function()
+        return getupvalue(characterInteractFunction, 4)
+    end
+end
 
 do -- broadcastinputbegan / broadcastinputended
-    local equip_function = require(game_folder.ItemSystem.ItemSystem)._equip;
+    keyFunctions.BroadcastInputBegan = function()
+        return getproto(itemSystem._equip, 5)
+    end
 
-    local input_began_function = getproto(equip_function, 5);
-    local input_ended_function = getproto(equip_function, 6);
-
-    network_keys.BroadcastInputBegan = fetch_key(input_began_function);
-    network_keys.BroadcastInputEnded = fetch_key(input_ended_function);
-end;
+    keyFunctions.BroadcastInputEnded = function()
+        return getproto(itemSystem._equip, 6)
+    end
+end
 
 do -- eject / hijack / entercar
-    local seat_added_function = getconnections(collection_service:GetInstanceAddedSignal("VehicleSeat"))[1].Function;
-    local seat_interact_function = getupvalue(seat_added_function, 1);
+    local seatInteractFunction = errorHandle(function()
+        return getupvalue(getconnections(CollectionService:GetInstanceAddedSignal("VehicleSeat"))[1].Function, 1)
+    end)
+    
+    keyFunctions.Hijack = function()
+        return getupvalue(seatInteractFunction, 1)
+    end
 
-    local hijack_function = getupvalue(seat_interact_function, 1);
-    local eject_function = getupvalue(seat_interact_function, 2);
-    local enter_car_function = getupvalue(seat_interact_function, 3);
+    keyFunctions.Eject = function()
+        return seatInteractFunction
+    end
 
-    network_keys.Hijack = fetch_key(hijack_function);
-    network_keys.Eject = fetch_key(eject_function);
-    network_keys.EnterCar = fetch_key(enter_car_function);
-end;
+    keyFunctions.EnterCar = function()
+        return getupvalue(seatInteractFunction, 3)
+    end
+end
 
-do -- playsound
-    for key, client_function in next, getupvalue(team_choose_ui.Init, 2) do 
-        if type(client_function) == "function" and getconstants(client_function)[1] == "Source" then 
-            network_keys.PlaySound = key;
-            
-            break;
-        end;
-    end; 
-end;
+do -- robstart / robend
+    local robFunction = errorHandle(function()
+        return getupvalue(getconnections(CollectionService:GetInstanceAddedSignal("SmallStore"))[1].Function, 1)
+    end)
 
---// Return Variables 
+    keyFunctions.RobEnd = function()
+        return robFunction
+    end
+    
+    keyFunctions.RobStart = function()
+        return robFunction, 2
+    end
+end
 
-local environment = getgenv();
+do -- opendoor
+    -- this may not work on all exploits, your exploit must support the gc argument for getproto
+    -- you can replace it with a gc search for a function with the constant "SequenceRequireState" if your exploit doesnt support this
 
-environment.network_keys, environment.network = network_keys, network;
+    keyFunctions.OpenDoor = function()
+        local doorAddedFunction = getconnections(CollectionService:GetInstanceAddedSignal("Door"))[1].Function
 
-warn(("Key Fetcher Loaded in %s Seconds"):format(tick() - start_time));
+        return getupvalue(getproto(getupvalue(doorAddedFunction, 2), 1, true)[1], 7)
+    end
+end
 
-return network_keys, network;
+do -- falldamage
+    keyFunctions.FallDamage = function()
+        return getupvalue(defaultActions.onJumpPressed._handlerListHead._next._fn, 4)
+    end
+end
+
+do -- equipgun / unequipgun / buygun
+    local displayGunList = errorHandle(function()
+        return getproto(require(gameFolder.GunShop.GunShopUI).displayList, 1)
+    end)
+    
+    keyFunctions.UnequipGun = function()
+        return displayGunList
+    end
+    
+    keyFunctions.EquipGun = function()
+        return displayGunList, 2
+    end
+
+    keyFunctions.BuyGun = function()
+        return displayGunList, 3
+    end
+end
+
+do -- ragdoll
+    keyFunctions.Ragdoll = function()
+        return require(gameFolder.Falling).StartRagdolling
+    end
+end
+
+do -- exception keys
+    local exceptionKeysFound, exceptionKeyCount = 0, 0
+    
+    for _ in next, exceptionKeys do
+        exceptionKeyCount += 1
+    end
+    
+    local success, errorMessage = pcall(function()
+        for key, clientFunction in next, getupvalue(teamChooseUI.Init, 2) do 
+            if typeof(clientFunction) == "function" then
+                for keyName, keyCheck in next, exceptionKeys do
+                    if keyCheck(clientFunction) then
+                        exceptionKeysFound += 1
+                        networkKeys[keyName] = key
+
+                        break
+                    end
+                end
+                
+                if exceptionKeysFound == exceptionKeyCount then
+                    break
+                end
+            end
+        end
+    end)
+
+    if not success then
+        local failedMessage = ("Failed to fetch key ( %s )"):format(errorMessage)
+
+        for keyName in next, exceptionKeys do
+            networkKeys[keyName] = failedMessage
+        end
+    end
+end
+
+--// Fetch keys from functions
+
+for keyName, keyFunction in next, keyFunctions do
+    local success, errorMessage = pcall(function()
+        networkKeys[keyName] = fetchKey(keyFunction()) or "Failed to fetch key"
+    end)
+
+    if not success or networkKeys[keyName] == "Failed to fetch key" then
+        if backupKeys[keyName] then
+            success, errorMessage = pcall(function()
+                networkKeys[keyName] = fetchKey(keyFunction(true)) or "Failed to fetch key"
+            end)
+        end
+
+        if not success then
+            networkKeys[keyName] = ("Failed to fetch key ( %s )"):format(errorMessage)
+        end
+    end
+end
+
+--// Return variables
+
+local environment = getgenv()
+
+environment.networkKeys, environment.network = networkKeys, network
+
+if debugOutput or debugOutput == nil then -- defaults to true unless explicitly set to false
+    rconsolewarn(("Key Fetcher Loaded in %s Seconds\n"):format(tick() - startTime))
+    
+    for index, key in next, networkKeys do
+        rconsoleprint(("%s : %s\n"):format(index, key))
+    end
+else
+    warn(("Key Fetcher Loaded in %s Seconds"):format(tick() - startTime))
+end
+
+return networkKeys, network
