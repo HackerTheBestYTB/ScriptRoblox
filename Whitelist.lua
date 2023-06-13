@@ -1,3 +1,4 @@
+--[[
 local client = {}
 client.Notify = function(callback)
 	return require(game:GetService("ReplicatedStorage").Game.Notification).new(callback)
@@ -23,3 +24,4 @@ else
 	game.Players.LocalPlayer:Kick("ID sai.")
 	wait(99999)
 end
+]]
