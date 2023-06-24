@@ -22,7 +22,7 @@ sprintButton.Name = "sprintButton"
 sprintButton.Parent = Frame
 sprintButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 sprintButton.BackgroundTransparency = 1.000
-sprintButton.Position = UDim2.new(-0.0857143104, 0, -0.199999958, 0)
+sprintButton.Position = UDim2.new(0.840875089, 0, 0.28342247, 0)
 sprintButton.Size = UDim2.new(0.999999702, 0, 1.00000012, 0)
 sprintButton.Image = "http://www.roblox.com/asset/?id=4425413038"
 sprintButton.ImageColor3 = Color3.fromRGB(100, 100, 100)
@@ -39,7 +39,7 @@ shotButton.Name = "shotButton"
 shotButton.Parent = Frame2
 shotButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 shotButton.BackgroundTransparency = 1.000
-shotButton.Position = UDim2.new(-7.14285707, 0, -0.771428585, 0)
+shotButton.Position = UDim2.new(0.840875089, 0, 0.28342247, 0)
 shotButton.Size = UDim2.new(0.999999702, 0, 1.00000012, 0)
 shotButton.Image = "rbxassetid://13848526378"
 shotButton.ImageColor3 = Color3.fromRGB(100, 100, 100)
@@ -59,5 +59,6 @@ sprintButton.MouseButton1Click:Connect(function()
 end)
 
 shotButton.MouseButton1Click:Connect(function()
-mouse1click()	
+mouse1click()
+wait(.05)	
 end)
