@@ -172,7 +172,7 @@ function movement:move_to_position(part, cframe, speed, car, target_vehicle, tri
         local velocity_unit = (higher_position - part.Position).Unit * speed;
         part.Velocity = Vector3.new(velocity_unit.X, 0, velocity_unit.Z);
 
-        task.wait();
+        task.wait(0.001);
 
         part.CFrame = CFrame.new(part.CFrame.X, y_level, part.CFrame.Z);
 
