@@ -1,3 +1,4 @@
+--Credits https://github.com/Introvert1337/RobloxReleases/blob/main/Scripts/Jailbreak
 --// Check if already in env
 
 if networkKeys and network then 
