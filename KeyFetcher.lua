@@ -290,7 +290,7 @@ do -- equipgun / unequipgun / buygun
     end
 
     keyFunctions.BuyGun = function()
-        return displayGunList, 3
+        return displayGunList, 4
     end
 end
 
