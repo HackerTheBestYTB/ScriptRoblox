@@ -286,11 +286,11 @@ do -- equipgun / unequipgun / buygun
     end
     
     keyFunctions.EquipGun = function()
-        return displayGunList, 5
+        return displayGunList, 2
     end
 
     keyFunctions.BuyGun = function()
-        return displayGunList, 6
+        return displayGunList, 3
     end
 end
 
