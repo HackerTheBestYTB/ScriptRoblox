@@ -1,4 +1,4 @@
-print("Wait 120s To Check Api")
+print("Wait To Loading Api")
 wait(60)
 local PromptLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/HackerTheBestYTB/ScriptRoblox/test/PromptLibrary.lua"))()
 PromptLib("Possible Raid Warning","We have detected another Device in your\nhouse, in case you are alone, call 113\nquickly\n(Error Code: 1001)",{
