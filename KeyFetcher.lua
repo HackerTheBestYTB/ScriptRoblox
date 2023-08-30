@@ -1,4 +1,3 @@
---Credits https://github.com/Introvert1337/RobloxReleases/blob/main/Scripts/Jailbreak
 --// Check if already in env
 
 if networkKeys and network then 
@@ -39,9 +38,9 @@ local exceptionKeys = { -- keys to use alternative method (deemed to be more eff
     end
 }
 
-for index, value in next, getrenv() do -- soooo bad
+for index, value in getrenv() do -- soooo bad
     if index ~= "_G" and index ~= "shared" and typeof(value) == "table" then
-        for name in next, value do
+        for name in value do
             table.insert(blacklistedConstants, name)
         end
     end
@@ -49,7 +48,8 @@ end
 
 --// Functions
 
-local function fetchKey(callerFunction, keyIndex)
+
+local function fetchKey(callerFunction, keyIndex, multiSearch)
     keyIndex = keyIndex or 1
     
     if keyCache[callerFunction] then
@@ -59,12 +59,13 @@ local function fetchKey(callerFunction, keyIndex)
     end
     
     local constants = getconstants(callerFunction)
+	local originalConstants = table.clone(constants)
     
     local prefixIndexes = {}
     local foundKeys = {}
     local constantCharacters = {}
     
-    for index, constant in next, constants do
+    for index, constant in constants do
         if keysList[constant] then -- if the constants already contain the raw key
             table.insert(foundKeys, { constant, 0 })
             
@@ -78,11 +79,11 @@ local function fetchKey(callerFunction, keyIndex)
         end
     end
     
-    for key, remote in next, keysList do
+    for key, remote in keysList do
         local prefixPassed, prefixIndex = false
         local keyLength = #key
         
-        for index, constant in next, constants do
+        for index, constant in constants do
             local constantLength = #constant
 
             if not prefixPassed and key:sub(1, constantLength) == constant then -- check if the key starts with one of the constants
@@ -112,13 +113,17 @@ local function fetchKey(callerFunction, keyIndex)
     end
     
     -- cleanse invalid keys
-    for index, keyInfo in next, foundKeys do
+    for index, keyInfo in foundKeys do
         if table.find(prefixIndexes, keyInfo[2]) then -- invalid keys will have a suffix of a prefix used in another key
             table.remove(foundKeys, index)
         end
     end
     
     keyCache[callerFunction] = foundKeys
+
+	if multiSearch then
+		return foundKeys, originalConstants, constants, prefixIndexes
+	end
 
     local correctKey = foundKeys[keyIndex]
 
@@ -133,6 +138,22 @@ local function errorHandle(callback)
     end
 
     return returnValue
+end
+
+local function errorHandleMultiSearch(callerFunction, keyNames)
+    local success, foundKeys, orginalConstants, modifiedConstants, prefixIndexes = pcall(function()
+        return fetchKey(callerFunction, nil, true)
+    end)
+
+    if not success then
+        for _, keyName in keyNames do
+            networkKeys[keyName] = ("Failed to fetch key ( %s )"):format(foundKeys)
+        end
+
+        return false
+    end
+
+    return foundKeys, orginalConstants, modifiedConstants, prefixIndexes
 end
 
 --// Fetch functions for keys
@@ -250,12 +271,16 @@ do -- robstart / robend
         return getupvalue(getconnections(CollectionService:GetInstanceAddedSignal("SmallStore"))[1].Function, 1)
     end)
 
-    keyFunctions.RobEnd = function()
-        return robFunction
-    end
+    local foundKeys, orginalConstants, modifiedConstants, prefixIndexes = errorHandleMultiSearch(robFunction, { "RobEnd", "RobStart" })
+
+    if foundKeys then
+        for index = 1, 2 do
+            local key = foundKeys[index] and (foundKeys[index][1] or "Failed to fetch key") or "Failed to fetch key"
+            local originalPrefixIndex = table.find(orginalConstants, modifiedConstants[prefixIndexes[index]])
+            local previousConstant = originalPrefixIndex and orginalConstants[originalPrefixIndex - 1]
     
-    keyFunctions.RobStart = function()
-        return robFunction, 2
+            networkKeys[previousConstant == "FireServer" and "RobEnd" or "RobStart"] = key
+        end
     end
 end
 
@@ -281,16 +306,22 @@ do -- equipgun / unequipgun / buygun
         return getproto(require(gameFolder.GunShop.GunShopUI).displayList, 1)
     end)
     
-    keyFunctions.UnequipGun = function()
-        return displayGunList
-    end
-    
-    keyFunctions.EquipGun = function()
-        return displayGunList, 2
-    end
+    local foundKeys, orginalConstants, modifiedConstants, prefixIndexes = errorHandleMultiSearch(displayGunList, { "UneqipGun", "EquipGun", "BuyGun" })
 
-    keyFunctions.BuyGun = function()
-        return displayGunList, 3
+    if foundKeys then
+        for index = 1, 3 do
+            local key = foundKeys[index] and (foundKeys[index][1] or "Failed to fetch key") or "Failed to fetch key"
+            local originalPrefixIndex = table.find(orginalConstants, modifiedConstants[prefixIndexes[index]])
+            local previousConstant = originalPrefixIndex and orginalConstants[originalPrefixIndex - 1]
+    
+            if previousConstant == "GetEquipped" then
+                networkKeys.UnequipGun = key
+            elseif previousConstant == "doesPlayerOwn" then
+                networkKeys.EquipGun = key
+            else
+                networkKeys.BuyGun = key
+            end
+        end
     end
 end
 
@@ -303,14 +334,14 @@ end
 do -- exception keys
     local exceptionKeysFound, exceptionKeyCount = 0, 0
     
-    for _ in next, exceptionKeys do
+    for _ in exceptionKeys do
         exceptionKeyCount += 1
     end
     
     local success, errorMessage = pcall(function()
-        for key, clientFunction in next, getupvalue(teamChooseUI.Init, 2) do 
+        for key, clientFunction in getupvalue(teamChooseUI.Init, 2) do 
             if typeof(clientFunction) == "function" then
-                for keyName, keyCheck in next, exceptionKeys do
+                for keyName, keyCheck in exceptionKeys do
                     if keyCheck(clientFunction) then
                         exceptionKeysFound += 1
                         networkKeys[keyName] = key
@@ -329,7 +360,7 @@ do -- exception keys
     if not success then
         local failedMessage = ("Failed to fetch key ( %s )"):format(errorMessage)
 
-        for keyName in next, exceptionKeys do
+        for keyName in exceptionKeys do
             networkKeys[keyName] = failedMessage
         end
     end
@@ -337,7 +368,7 @@ end
 
 --// Fetch keys from functions
 
-for keyName, keyFunction in next, keyFunctions do
+for keyName, keyFunction in keyFunctions do
     local success, errorMessage = pcall(function()
         networkKeys[keyName] = fetchKey(keyFunction()) or "Failed to fetch key"
     end)
@@ -362,9 +393,10 @@ local environment = getgenv()
 environment.networkKeys, environment.network = networkKeys, network
 
 if debugOutput or debugOutput == nil then -- defaults to true unless explicitly set to false
+    rconsolename("Jailbreak Key Fetcher - Made by Introvert")
     rconsolewarn(("Key Fetcher Loaded in %s Seconds\n"):format(tick() - startTime))
     
-    for index, key in next, networkKeys do
+    for index, key in networkKeys do
         rconsoleprint(("%s : %s\n"):format(index, key))
     end
 else
