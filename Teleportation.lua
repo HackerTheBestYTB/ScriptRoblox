@@ -214,11 +214,11 @@ end);
 for index, vehicle_data in next, dependencies.modules.vehicle_data do
     if vehicle_data.Type == "Heli" then -- helicopters
         dependencies.helicopters[vehicle_data.Make] = true;
-    --elseif vehicle_data.Type == "Motorcycle" then --- motorcycles
-        --dependencies.motorcycles[vehicle_data.Make] = true;
+    elseif vehicle_data.Type == "Motorcycle" then --- motorcycles
+        dependencies.motorcycles[vehicle_data.Make] = true;
     end;
 
-    if vehicle_data.Type ~= "Chassis" and vehicle_data.Type ~= "Motorcycle" and vehicle_data.Type ~= "Heli" and vehicle_data.Type ~= "DuneBuggy" and vehicle_data.Make ~= "Volt" then -- weird vehicles that are not supported
+    if vehicle_data.Type ~= "Chassis" and vehicle_data.Type ~= "Motorcycle" and vehicle_data.Type ~= "Heli" and vehicle_data.Type ~= "DuneBuggy" and vehicle_data.Make ~= "Volt" and vehicle_data.Make ~= "Patrol" then -- weird vehicles that are not supported
         dependencies.unsupported_vehicles[vehicle_data.Make] = true;
     end;
     
