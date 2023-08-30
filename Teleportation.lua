@@ -59,9 +59,9 @@ local dependencies = {
         paraglide = require(replicated_storage.Game.Paraglide)
     },
     helicopters = { Heli = true }, -- heli is included in free vehicles
-    motorcycles = false, --{ Volt = false }, -- volt type is "custom" but works the same as a motorcycle
+    motorcycles = { Patrol = false }, -- volt type is "custom" but works the same as a motorcycle
     free_vehicles = { Camaro = true },
-    unsupported_vehicles = false --{ SWATVan = true },
+    unsupported_vehicles = { SWATVan = true , Wraith = true, Patrol = true},
     door_positions = { }    
 };
 
@@ -218,7 +218,7 @@ for index, vehicle_data in next, dependencies.modules.vehicle_data do
         dependencies.motorcycles[vehicle_data.Make] = true;
     end;
 
-    if vehicle_data.Type ~= "Chassis" and vehicle_data.Type ~= "Motorcycle" and vehicle_data.Type ~= "Heli" and vehicle_data.Type ~= "DuneBuggy" and vehicle_data.Make ~= "Volt" and vehicle_data.Make ~= "Patrol" then -- weird vehicles that are not supported
+    if vehicle_data.Type ~= "Chassis" and vehicle_data.Type ~= "Motorcycle" and vehicle_data.Type ~= "Heli" and vehicle_data.Type ~= "DuneBuggy" and vehicle_data.Make ~= "Volt" then -- weird vehicles that are not supported
         dependencies.unsupported_vehicles[vehicle_data.Make] = true;
     end;
     
