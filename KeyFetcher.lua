@@ -422,11 +422,11 @@ local environment = getgenv()
 environment.networkKeys, environment.network = networkKeys, network
 
 if debugOutput or debugOutput == nil then -- defaults to true unless explicitly set to false
-    rconsolename("Jailbreak Key Fetcher - Made by Introvert")
-    rconsolewarn(("Key Fetcher Loaded in %s Seconds\n"):format(os.clock() - startTime))
+    --rconsolename("Jailbreak Key Fetcher - Made by Introvert")
+    --rconsolewarn(("Key Fetcher Loaded in %s Seconds\n"):format(os.clock() - startTime))
     
     for index, key in networkKeys do
-        rconsoleprint(("%s : %s\n"):format(index, key))
+        --rconsoleprint(("%s : %s\n"):format(index, key))
     end
 else
     warn(("Key Fetcher Loaded in %s Seconds"):format(os.clock() - startTime))
