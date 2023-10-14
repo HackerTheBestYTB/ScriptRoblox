@@ -4,14 +4,32 @@ if networkKeys and network then
     return networkKeys, network
 end
 
---// Variables 
+--// Wait for game load
 
-local startTime = tick()
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = game:GetService("Players").LocalPlayer
+
+if not player.Character then
+    player.CharacterAdded:Wait()
+end
+
+local setEvent = require(ReplicatedStorage:WaitForChild("Module").AlexChassis).SetEvent
+local network = getupvalue(setEvent, 1)
+
+while not network and task.wait() do
+    network = getupvalue(setEvent, 1)
+end
+
+--// Variables
+
+local startTime = os.clock()
+
 local CollectionService = game:GetService("CollectionService")
 
-local network = getupvalue(require(ReplicatedStorage.Module.AlexChassis).SetEvent, 1)
 local keysList = getupvalue(getupvalue(network.FireServer, 1), 3)
 
 local gameFolder = ReplicatedStorage.Game
@@ -26,7 +44,9 @@ local keyFunctions = {}
 local blacklistedConstants = {}
 local keyCache = {}
 local backupKeys = { -- could do getinfo numparams but this is faster
-    Arrest = true
+    Arrest = true,
+    Breakout = true,
+    Eject = true
 }
 
 local exceptionKeys = { -- keys to use alternative method (deemed to be more efficient for these cases)
@@ -44,10 +64,11 @@ for index, value in getrenv() do -- soooo bad
             table.insert(blacklistedConstants, name)
         end
     end
+
+    table.insert(blacklistedConstants, index)
 end
 
 --// Functions
-
 
 local function fetchKey(callerFunction, keyIndex, multiSearch)
     keyIndex = keyIndex or 1
@@ -59,7 +80,7 @@ local function fetchKey(callerFunction, keyIndex, multiSearch)
     end
     
     local constants = getconstants(callerFunction)
-	local originalConstants = table.clone(constants)
+    local originalConstants = table.clone(constants)
     
     local prefixIndexes = {}
     local foundKeys = {}
@@ -70,7 +91,7 @@ local function fetchKey(callerFunction, keyIndex, multiSearch)
             table.insert(foundKeys, { constant, 0 })
             
             constants[index] = nil
-        elseif typeof(constant) ~= "string" or constant == "" or constant:match("%u") or constant:match("%W") or table.find(blacklistedConstants, constant) then
+        elseif typeof(constant) ~= "string" or constant == "" or constant:match("[%u%W]") or table.find(blacklistedConstants, constant) then
             constants[index] = nil -- remove constants that are 100% not the ones we need to make it a bit faster
         else
             for character in constant:gmatch("(%w)") do
@@ -121,9 +142,9 @@ local function fetchKey(callerFunction, keyIndex, multiSearch)
     
     keyCache[callerFunction] = foundKeys
 
-	if multiSearch then
-		return foundKeys, originalConstants, constants, prefixIndexes
-	end
+    if multiSearch then
+        return foundKeys, originalConstants, constants, prefixIndexes
+    end
 
     local correctKey = foundKeys[keyIndex]
 
@@ -188,7 +209,7 @@ end
 
 do -- jointeam
     keyFunctions.SwitchTeam = function()
-        return getproto(getproto(getproto(require(gameFolder.SidebarUI).Init, 2), 1), 1)
+        return getproto(getproto(getproto(require(gameFolder.SidebarUI).Init, 3), 1), 1)
     end
 end
 
@@ -233,8 +254,12 @@ do -- arrest / pickpocket / breakout
         return getupvalue(characterInteractFunction, 3)
     end
     
-    keyFunctions.Breakout = function()
-        return getupvalue(characterInteractFunction, 4)
+    keyFunctions.Breakout = function(backup)
+        if backup then
+            return characterInteractFunction
+        else
+            return getupvalue(characterInteractFunction, 4)
+        end
     end
 end
 
@@ -257,8 +282,12 @@ do -- eject / hijack / entercar
         return getupvalue(seatInteractFunction, 1)
     end
 
-    keyFunctions.Eject = function()
-        return seatInteractFunction
+    keyFunctions.Eject = function(backup)
+        if backup then
+            return getupvalue(seatInteractFunction, 2)
+        else
+            return seatInteractFunction
+        end
     end
 
     keyFunctions.EnterCar = function()
@@ -275,7 +304,7 @@ do -- robstart / robend
 
     if foundKeys then
         for index = 1, 2 do
-            local key = foundKeys[index] and (foundKeys[index][1] or "Failed to fetch key") or "Failed to fetch key"
+            local key = foundKeys[index] and foundKeys[index][1] or "Failed to fetch key"
             local originalPrefixIndex = table.find(orginalConstants, modifiedConstants[prefixIndexes[index]])
             local previousConstant = originalPrefixIndex and orginalConstants[originalPrefixIndex - 1]
     
@@ -310,7 +339,7 @@ do -- equipgun / unequipgun / buygun
 
     if foundKeys then
         for index = 1, 3 do
-            local key = foundKeys[index] and (foundKeys[index][1] or "Failed to fetch key") or "Failed to fetch key"
+            local key = foundKeys[index] and foundKeys[index][1] or "Failed to fetch key"
             local originalPrefixIndex = table.find(orginalConstants, modifiedConstants[prefixIndexes[index]])
             local previousConstant = originalPrefixIndex and orginalConstants[originalPrefixIndex - 1]
     
@@ -394,13 +423,13 @@ environment.networkKeys, environment.network = networkKeys, network
 
 if debugOutput or debugOutput == nil then -- defaults to true unless explicitly set to false
     rconsolename("Jailbreak Key Fetcher - Made by Introvert")
-    rconsolewarn(("Key Fetcher Loaded in %s Seconds\n"):format(tick() - startTime))
+    rconsolewarn(("Key Fetcher Loaded in %s Seconds\n"):format(os.clock() - startTime))
     
     for index, key in networkKeys do
         rconsoleprint(("%s : %s\n"):format(index, key))
     end
 else
-    warn(("Key Fetcher Loaded in %s Seconds"):format(tick() - startTime))
+    warn(("Key Fetcher Loaded in %s Seconds"):format(os.clock() - startTime))
 end
 
 return networkKeys, network
