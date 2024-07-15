@@ -35,7 +35,7 @@ local keysList = getupvalue(getupvalue(network.FireServer, 1), 3)
 local gameFolder = ReplicatedStorage.Game
 local robloxEnvironment = getrenv()
 
-local teamChooseUI = require(gameFolder.TeamSelect.TeamChooseUI) -- module used in multiple keys
+local teamChooseUI = require(ReplicatedStorage.TeamSelect.TeamChooseUI) -- module used in multiple keys
 local defaultActions = require(gameFolder.DefaultActions) -- module used in multiple keys
 local itemSystem = require(gameFolder.ItemSystem.ItemSystem) -- module used in multiple keys
 
